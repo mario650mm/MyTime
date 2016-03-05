@@ -1,0 +1,57 @@
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+<dom-module id="mario-current">
+	<style is="custom-style">
+		:host{
+			position: absolute;
+			bottom: 15px;
+			right: 15px;
+			text-align: right;
+		}
+		span{
+			display: block;
+		}
+		.city{
+			font-size:5em;
+			font-weight: bold;
+			color: white;
+			font-family: 'Roboto', 'Noto';
+			text-shadow: 0px opx 5px black;
+		}
+		.description, .humidity{
+			font-size:2em;
+			font-weight: bold;
+			color: white;
+			font-family: 'Roboto', 'Noto';
+			text-shadow: 0px opx 5px black;
+		}
+		.temp{
+			font-size:7em;
+			font-weight: bold;
+			color: white;
+			font-family: 'Roboto', 'Noto';
+			text-shadow: 0px opx 5px black;
+		}
+	</style>
+	<template>
+		<span class="humidity">{{humidity}}</span>
+		<span class="description">{{description}}</span>
+		<span class="city">{{city}}</span>
+		<span class="temp">{{temp}}</span>
+	</template>
+</dom-module>
+<script>
+	Polymer({
+		is: 'mario-current',
+		properties: {
+			humidity: Number,
+			temp: Number,
+			description: String,
+			city: String
+		},
+		ready: function(){
+
+		},
+	});
+</script>
