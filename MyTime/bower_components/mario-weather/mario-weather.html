@@ -1,0 +1,84 @@
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../mario-current/mario-current.html">
+<link rel="import" href="../mario-forecast/mario-forecast.html">
+<dom-module id="mario-weather">
+	<style>
+		:host{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			display: block;
+		}
+		iron-image{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			background-color: lightgrey;
+		}
+	</style>
+	<template>
+		<iron-image sizing="cover" preload src="{{imageSrc}}"></iron-image>
+		<iron-ajax
+			auto
+			handle-as="json"
+			url="http://api.openweathermap.org/data/2.5/weather?lat=21.1204319&lon=-101.6756869&appid=44db6a862fba0b067b1930da0d769e98&units=metric&lang=es"
+			on-response="getCurrentData">
+		</iron-ajax>
+		<iron-ajax
+			auto
+			handle-as="json"
+			url="http://api.openweathermap.org/data/2.5/forecast?lat=21.1204319&lon=-101.6756869&appid=44db6a862fba0b067b1930da0d769e98&units=metric&lang=es"
+			on-response="getForescastData">
+		</iron-ajax>
+		<mario-current id="currentWeather"></mario-current>
+		<!--<mario-forecast id="forecast"></mario-forecast>-->
+	</template>
+</dom-module>
+<script type="text/javascript" src="moment.js"></script>
+<script>
+	Polymer({
+		is: 'mario-weather',
+		properties: {
+			imageSrc: String
+		},
+		ready: function(){
+
+		},
+		getCurrentData: function(event){
+			console.log(event.detail.response);
+			var response = event.detail.response;
+			this.imageSrc = "imgs/" + response.weather[0].icon+"_bg.jpg";
+			var current = this.$.currentWeather;
+			console.log(current);
+
+			current.temp = Number(response.main.temp).toFixed(2) + "ºC";
+			current.temp_max = Number(response.main.temp_max).toFixed(2) + "ºC";
+			current.temp_min = Number(response.main.temp_min).toFixed(2) + "ºC";
+			current.humidity = Number(response.main.humidity) + "%";
+			current.city = response.name;
+			current.description = response.weather[0].description;
+		},
+		getForescastData: function(event){
+			console.log(event.detail.response);
+			var response = event.detail.response;
+			var forecast = this.$.forecast;
+			var list = response.list;
+
+			for(var i=0; i<list.length;i++){
+				list[i].icon = "imgs/" + list[i].weather[0].icon + ".png";
+				list[i].description = this.capitalize(list[i].weather[0].description);
+				list[i].humidity = list[i].humidity + "%";
+				//list[i].temp_max = Number(list[i].weather[i].temp_max).toFixed(1) + "ºC";
+				//list[i].temp_min = Number(list[i].weather[i].temp_min).toFixed(1) + "ºC";
+				var day = moment.unix(Number(list[i].dt));
+				day.locale('es');
+				//console.log(day.format("dddd[, ]DD/MM/YYYY"));
+				list[i].date = day.format("dddd[, ]DD/MM/YYYY");
+			}
+		},
+		capitalize: function(s){
+			return s[0].toUpperCase() + s.slice(1);
+		}
+	});
+</script>
